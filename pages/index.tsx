@@ -13,11 +13,11 @@ interface State {
   operatorIndex: number,
 }
 
-const calculateValue = (state: State): number => {
-  switch(OPERATORS[state.operatorIndex]) {
-    case EBitwiseOperator.AND: return state.value1 & state.value2
-    case EBitwiseOperator.OR: return state.value1 | state.value2
-    case EBitwiseOperator.XOR: return state.value1 ^ state.value2
+const calculateValue = (val1, val2, operatorIndex): number => {
+  switch(OPERATORS[operatorIndex]) {
+    case EBitwiseOperator.AND: return val1 & val2
+    case EBitwiseOperator.OR: return val1 | val2
+    case EBitwiseOperator.XOR: return val1 ^ val2
   }
 }
 
@@ -34,6 +34,8 @@ const Home: React.FC = () => {
     operatorIndex: 0,
   });
 
+  const [operatorIndex, setOperatorIndex] = useState<number>(0);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -47,12 +49,16 @@ const Home: React.FC = () => {
 
         <div className={styles.secondValue}>
           <BitwiseOperator onClickCallback={() => {
-            setState((state) => ({ operatorIndex: 2, ...state }));
-          }}  value={OPERATORS[state.operatorIndex]} />
+            if(operatorIndex + 1 == OPERATORS.length) {
+              setOperatorIndex(() => 0);
+            } else {
+              setOperatorIndex((idx) => idx + 1);
+            }
+          }}  value={OPERATORS[operatorIndex]} />
           <BitwiseOperand value={state.value2} />
         </div>
 
-        <BitwiseOperand value={calculateValue(state)} />
+        <BitwiseOperand value={calculateValue(state.value1, state.value2, operatorIndex)} />
       </main>
     </div>
   )
